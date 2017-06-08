@@ -2,9 +2,9 @@ import models.Kitap;
 import models.Uye;
 
 import java.sql.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
 /**
  * Created by Şeyma Yılmaz on 7.6.2017.
@@ -176,17 +176,279 @@ public class DatabaseHelper {
 
     public static void kitapEkle(Kitap kitap){
 
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = DriverManager.getConnection(
+                    Config.DB_URL,
+                    Config.DB_USER,
+                    Config.DB_PASSWORD
+            );
+
+            String sql = "INSERT INTO kutuphane.kitap (isim, turu, adet, yazar) " +
+                    "VALUES (?, ?, ?, ?)";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, kitap.getIsim());
+            preparedStatement.setString(2, kitap.getTur());
+            preparedStatement.setInt(3, kitap.getAdet());
+            preparedStatement.setString(4, kitap.getYazar());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public static void uyeEkle(Uye uye){
+        Connection connection=null;
+        PreparedStatement preparedStatement=null;
+
+        try {
+            connection=DriverManager.getConnection(Config.DB_URL,
+                    Config.DB_USER,Config.DB_PASSWORD );
+
+
+            String sql="INSERT INTO kutuphane.uye (isim, soyisim, tcno, adres, tarih)" +
+                    " VALUES (?,?,?,?,?)";
+            preparedStatement=connection.prepareStatement(sql);
+
+            preparedStatement.setString(1,uye.getIsim());
+            preparedStatement.setString(2,uye.getSoyisim());
+            preparedStatement.setString(3,uye.getTcNo());
+            preparedStatement.setString(4,uye.getAdres());
+            Date currentDate = new Date(System.currentTimeMillis());
+            preparedStatement.setDate(5, currentDate);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(preparedStatement!=null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection!=null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 
     }
 
     public static void kitapSil(int kitapId){
 
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = DriverManager.getConnection(
+                    Config.DB_URL,
+                    Config.DB_USER,
+                    Config.DB_PASSWORD
+            );
+
+            String sql = "DELETE FROM kutuphane.kitap WHERE kitap_id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, kitapId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    public static boolean kitapVarMi(int kitapId){
+
+        boolean kitapDurum = false; /* kitap yok */
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = DriverManager.getConnection(
+                    Config.DB_URL,
+                    Config.DB_USER,
+                    Config.DB_PASSWORD
+            );
+
+            String sql = "SELECT * FROM kutuphane.kitap WHERE kitap_id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, kitapId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            int row = 0;
+            while (resultSet.next()){
+                row++;
+            }
+
+            if(row == 0){
+                kitapDurum = false; /* kitap yok */
+            }
+            else{
+                kitapDurum = true; /* kitap var */
+            }
+
+            resultSet.close();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return kitapDurum;
+
     }
 
     public static void uyeSil(int uyeId){
+        Connection connection=null;
+        PreparedStatement preparedStatement=null;
+
+        try {
+            connection=DriverManager.getConnection(Config.DB_URL,
+                    Config.DB_USER, Config.DB_PASSWORD);
+
+
+            String sql="DELETE FROM kutuphane.uye WHERE uye_id=?";
+            preparedStatement=connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1,uyeId);
+            preparedStatement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+            if(connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+
+    public  static  boolean uyeVarMi (int uyeId){
+        boolean uyeDurum=false;
+
+        Connection connection=null;
+        PreparedStatement preparedStatement=null;
+
+
+        try {
+            connection=DriverManager.getConnection(Config.DB_URL ,Config.DB_USER,
+                    Config.DB_PASSWORD);
+
+
+            String sql="SELECT *FROM kutuphane.uye WHERE uye_id=?";
+            preparedStatement=connection.prepareStatement(sql);
+            preparedStatement.setInt(1,uyeId);
+            ResultSet resultSet=preparedStatement.executeQuery();
+
+            int row=0;
+            while(resultSet.next()){
+                row++;
+            }
+            if(row==0){
+                uyeDurum=false;
+            }
+            else {
+                uyeDurum=true;
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(preparedStatement != null ){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return uyeDurum;
 
     }
 

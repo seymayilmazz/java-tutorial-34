@@ -1,6 +1,7 @@
 import models.Kitap;
 import models.Uye;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.List;
 import java.util.Scanner;
 
@@ -52,10 +53,45 @@ public class Main {
             }
             else if(secim==Menu.KITAP_EKLE){
                 Kitap kitap = new Kitap();
+
+                System.out.print("Kitap ismini girin : ");
+                scanner.nextLine();
+                String kitapIsmi = scanner.nextLine();
+                kitap.setIsim(kitapIsmi);
+
+                System.out.print("Kitap türünü girin :  ");
+                String kitapTur = scanner.nextLine();
+                kitap.setTur(kitapTur);
+
+                System.out.println("Kitap adetini girin : ");
+                int adet = scanner.nextInt();
+                kitap.setAdet(adet);
+
+                System.out.println("Kitap yazarını girin : ");
+                scanner.nextLine();
+                String yazar = scanner.nextLine();
+                kitap.setYazar(yazar);
+
                 /* degerleri al */
                 DatabaseHelper.kitapEkle(kitap);
             }
             else if(secim==Menu.KITAP_SIL){
+                List<Kitap> kitapListesi = DatabaseHelper.kitapListesiGetir();
+                DatabaseHelper.kitapListesiYazdir(kitapListesi);
+
+                System.out.println("Lütfen silinecek kitap id'sini girin : ");
+                scanner.nextLine();
+                int kitapId = scanner.nextInt();
+                boolean kitapVarMi = DatabaseHelper.kitapVarMi(kitapId);
+
+                if(kitapVarMi == false){
+                    System.out.println("Bu id'ye sahip bir kitap yoktur");
+                }
+                else{
+                    DatabaseHelper.kitapSil(kitapId);
+                    System.out.println("kitap basariyla silindi");
+                }
+
 
             }
             else if(secim==Menu.KITAP_DUZENLE){
@@ -67,10 +103,39 @@ public class Main {
 
             }
             else if(secim == Menu.UYE_EKLE){
+                Uye uye=new Uye();
+                System.out.println("üye isim: ");
+                scanner.nextLine();
+                String uyeIsmi=scanner.nextLine();
+                uye.setIsim(uyeIsmi);
+                System.out.println("üye soyisim: ");
+                String uyeSoyisim=scanner.nextLine();
+                uye.setSoyisim(uyeSoyisim);
+                System.out.println("tc no giriniz:  ");
+                String tcNo=scanner.nextLine();
+                uye.setTcNo(tcNo);
+                System.out.println("adresi giriniz:  ");
+                String adres=scanner.nextLine();
+                uye.setAdres(adres);
 
+                DatabaseHelper.uyeEkle(uye);
             }
             else if(secim == Menu.UYE_SİL){
+                List<Uye> uyeListesi= DatabaseHelper.uyeListesiGetir();
+                DatabaseHelper.uyeListesiniYazdir(uyeListesi);
 
+                System.out.println("Lütfen silinecek üye id'si giriniz:  ");
+                scanner.nextLine();
+                int uyeId=scanner.nextInt();
+                boolean uyeVarMi=DatabaseHelper.uyeVarMi(uyeId);
+
+                if(!uyeVarMi){
+                    System.out.println("böyle bir üye yok ");
+                }
+                else{
+                   DatabaseHelper.uyeSil(uyeId);
+                    System.out.println("üye başarıyla silindi! ");
+                }
             }
             else if(secim == Menu.UYE_DUZENLE){
 

@@ -4,7 +4,7 @@
 public class Config {
 
     /* database config */
-    public static final String DB_URL = "jdbc:mysql://localhost:3306";
+    public static final String DB_URL = "jdbc:mysql://localhost:3306/kutuphane";
 
     public static final String DB_USER = "root";
 
